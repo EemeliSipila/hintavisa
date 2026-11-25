@@ -1,0 +1,20 @@
+body { margin: 0; font-family: system-ui, sans-serif; background: #f3f4f6; color: #222; }
+main { max-width: 560px; margin: 0 auto; padding: 16px; }
+header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+h1 { margin: 8px 0; }
+.card { background: #fff; border-radius: 8px; padding: 16px 20px; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+label { display: block; margin: 12px 0 4px; }
+input { padding: 8px; font-size: 1rem; border: 1px solid #bbb; border-radius: 4px; }
+button { padding: 8px 14px; margin: 8px 8px 0 0; font-size: 1rem; border: 0; border-radius: 4px; background: #2563eb; color: #fff; cursor: pointer; }
+button:disabled { opacity: .5; cursor: default; }
+button.secondary { background: #e5e7eb; color: #222; }
+button.link { background: none; color: #2563eb; padding: 0; margin: 0; text-decoration: underline; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.row button { margin: 0; }
+.error { color: #b91c1c; }
+.muted { color: #666; }
+.code { font-size: 1.4rem; letter-spacing: 2px; }
+.product { max-width: 200px; display: block; margin: 0 auto; }
+.winner { font-size: 1.3rem; font-weight: bold; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid #ddd; }

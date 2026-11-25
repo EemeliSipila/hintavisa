@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /sessions/{sessionId} {
+      function signedIn() { return request.auth != null; }
+      function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+      function uid() { return request.auth.uid; }
+
+      allow read: if signedIn();
+
+      // Luoja on aina ainoa pelaaja uudessa pelissä.
+      allow create: if signedIn()
+        && request.resource.data.hostUid == uid()
+        && request.resource.data.status == 'waiting'
+        && request.resource.data.players.keys().hasOnly([uid()]);
+
+      allow update: if signedIn() && (
+        // Pelin luoja ohjaa peliä (kierrokset, pisteet), mutta ei voi vaihtaa luojaa.
+        (resource.data.hostUid == uid() && request.resource.data.hostUid == uid())
+
+        // Liittyminen / poistuminen odotustilassa: vain oma pelaajatieto, max 4 pelaajaa.
+        || (resource.data.status == 'waiting'
+            && changed().hasOnly(['players'])
+            && request.resource.data.players.diff(resource.data.players).affectedKeys().hasOnly([uid()])
+            && request.resource.data.players.size() <= 4
+            && (!(uid() in request.resource.data.players)
+                || request.resource.data.players[uid()].score == 0))
+
+        // Arvaus: vain oma, vain kerran, vain pelaajana ja vain kierroksen aikana.
+        || (resource.data.status == 'playing'
+            && uid() in resource.data.players
+            && changed().hasOnly(['guesses'])
+            && request.resource.data.guesses.diff(resource.data.guesses).affectedKeys().hasOnly([uid()])
+            && !(uid() in resource.data.guesses)
+            && request.resource.data.guesses[uid()] is number
+            && request.resource.data.guesses[uid()] >= 0)
+      );
+
+      allow delete: if false;
+    }
+  }
+}
